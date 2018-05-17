@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <item name="url" type="string">https://api.themoviedb.org/3/</item>
+    <item name="api_key" type="string">1f54bd990f1cdfb230adb312546d765d</item>
+    <item name="default_language" type="string">pt-BR</item>
+    <item name="default_region" type="string">BR</item>
+
+    <string-array name="api_key">
+        <item>dg538a</item>
+        <item>b312</item>
+        <item>4bd990f1cd</item>
+        <item>l84dk79cl</item>
+        <item>546d765d</item>
+        <item>865de</item>
+        <item>1f5</item>
+        <item>fb230ad</item>
+    </string-array>
+</resources>

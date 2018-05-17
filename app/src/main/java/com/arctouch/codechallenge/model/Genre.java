@@ -1,7 +1,13 @@
 package com.arctouch.codechallenge.model;
 
-public class Genre {
+import java.io.Serializable;
 
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+
+public class Genre extends RealmObject implements Serializable {
+
+    @PrimaryKey
     public int id;
     public String name;
 

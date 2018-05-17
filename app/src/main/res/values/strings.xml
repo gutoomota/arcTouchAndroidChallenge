@@ -1,4 +1,15 @@
 <resources>
     <string name="app_name">Code Challenge</string>
     <string name="movie_and_genres">%s - %s</string>
+    <string name="poster_description">Poster of the movie</string>
+    <string name="backdrop_description">Backdrop image of the movie</string>
+    <string name="title">Title</string>
+    <string name="release">Release</string>
+    <string name="genre">Genre</string>
+    <string name="overview">Overview</string>
+    <string name="search">🔎 Search</string>
+
+    <string-array name="warning">
+        <item>⚠ Check your Internet connection</item>
+    </string-array>
 </resources>
