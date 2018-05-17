@@ -2,7 +2,8 @@
 
 ## Written by Mário Augusto Mota Martins 
 
->> Objectives
+## Objectives
+
 ● Blockers:
 > Select a specific movie to see details (name, poster image, backdrop image, genre, overview and release date). 
 
