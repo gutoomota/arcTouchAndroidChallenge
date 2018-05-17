@@ -45,6 +45,8 @@
 
 ## Details
 
+> A Favorite system was made, in which the user can mark the movies he want to save localy. After saved as favorite, the movie will be available on the "star" button at the toolbar even when the phone is without network connection, as it's stored in a local database.
+
 > The Strings from TmdbApi.class were stored on a xml file and the API_KEY is Distributed on string_array to make it harder to reassemble in case of a reverse engineering on the .apk file
 
 > The Movie Search is being done by an url that was found at the TmdbAPI documentation page.
