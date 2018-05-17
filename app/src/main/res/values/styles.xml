@@ -6,4 +6,17 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="styleDetailsTitle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/dimenSmallText</item>
+    </style>
+
+    <style name="styleDetailsContent">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/dimenMediumText</item>
+    </style>
+
 </resources>
