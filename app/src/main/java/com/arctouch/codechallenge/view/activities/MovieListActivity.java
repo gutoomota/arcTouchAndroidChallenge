@@ -64,6 +64,8 @@ public class MovieListActivity extends AppCompatActivity implements MovieListRec
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 String query = String.valueOf(charSequence);
+                resetSearch();
+
                 searchMovie(query);
             }
 
@@ -81,7 +83,12 @@ public class MovieListActivity extends AppCompatActivity implements MovieListRec
 
                 if (!recyclerView.canScrollVertically(1))  {
                     currentPage++;
-                    requestMoviePage();
+
+                    String query = etSearch.getText().toString();
+                    if (query.isEmpty())
+                        requestMoviePage();
+                    else
+                        searchMovie(query);
                 }
             }
         });
@@ -90,16 +97,24 @@ public class MovieListActivity extends AppCompatActivity implements MovieListRec
     private void searchMovie(String query) {
         requestKey = requestKeyBuilder.generateRandomKey(keyLength);
 
-        totalPages = currentPage = 1;
-        homeAdapter = null;
-        movies = new ArrayList<>();
-
-        if ((query == null) || (query.isEmpty()))
+        if ((query == null) || (query.isEmpty())) {
+            resetSearch();
             requestMoviePage();
-        else {
+        } else {
+            if (currentPage <= totalPages) {
+                progressBar.setVisibility(View.VISIBLE);
+
+                controller.getMovieByQuery(query, currentPage, requestKey);
+            }
+        }
+    }
+
+    private void requestMoviePage(){
+        assert (currentPage != null) && (totalPages != null);
+        if (currentPage <= totalPages) {
             progressBar.setVisibility(View.VISIBLE);
 
-            controller.getMovieByQuery(query, currentPage, requestKey);
+            controller.getUpcomingMovies(currentPage, requestKey);
         }
     }
 
@@ -119,15 +134,6 @@ public class MovieListActivity extends AppCompatActivity implements MovieListRec
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
-        }
-    }
-
-    private void requestMoviePage(){
-        assert (currentPage != null) && (totalPages != null);
-        if (currentPage <= totalPages) {
-            progressBar.setVisibility(View.VISIBLE);
-
-            controller.getUpcomingMovies(currentPage, requestKey);
         }
     }
 
@@ -167,21 +173,29 @@ public class MovieListActivity extends AppCompatActivity implements MovieListRec
 
         if (controller.networkObserver.isNetworkAvailable(controller)) {
             String query = etSearch.getText().toString();
+
+            resetSearch();
+
             if (query.isEmpty()) {
                 progressBar.setVisibility(View.VISIBLE);
-
-                totalPages = currentPage = 1;
-                movies = new ArrayList<>();
-                homeAdapter = null;
 
                 requestKey = requestKeyBuilder.generateRandomKey(keyLength);
                 controller.getInitialData(requestKey);
 
                 hideLog();
-            } else
+            } else {
+                resetSearch();
+
                 searchMovie(query);
+            }
 
         }else
             displayLog(getResources().getStringArray(R.array.warning)[0]);
+    }
+
+    private void resetSearch(){
+        totalPages = currentPage = 1;
+        homeAdapter = null;
+        movies = new ArrayList<>();
     }
 }
