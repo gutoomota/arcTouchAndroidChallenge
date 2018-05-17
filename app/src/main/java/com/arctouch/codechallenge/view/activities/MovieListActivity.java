@@ -82,14 +82,14 @@ public class MovieListActivity extends AppCompatActivity implements MovieListRec
                 requestKey = requestKeyBuilder.generateRandomKey(keyLength);
 
                 if (!recyclerView.canScrollVertically(1))  {
-                    currentPage++;
 
                     String query = etSearch.getText().toString();
                     if (query.isEmpty())
                         requestMoviePage();
                     else
                         searchMovie(query);
-                }
+                } else
+                    progressBar.setVisibility(View.GONE);
             }
         });
     }
@@ -101,20 +101,19 @@ public class MovieListActivity extends AppCompatActivity implements MovieListRec
             resetSearch();
             requestMoviePage();
         } else {
-            if (currentPage <= totalPages) {
+            if (currentPage < totalPages) {
                 progressBar.setVisibility(View.VISIBLE);
 
-                controller.getMovieByQuery(query, currentPage, requestKey);
+                controller.getMovieByQuery(query, currentPage + 1, requestKey);
             }
         }
     }
 
     private void requestMoviePage(){
-        assert (currentPage != null) && (totalPages != null);
-        if (currentPage <= totalPages) {
+        if (currentPage < totalPages) {
             progressBar.setVisibility(View.VISIBLE);
 
-            controller.getUpcomingMovies(currentPage, requestKey);
+            controller.getUpcomingMovies(currentPage + 1, requestKey);
         }
     }
 
@@ -183,18 +182,16 @@ public class MovieListActivity extends AppCompatActivity implements MovieListRec
                 controller.getInitialData(requestKey);
 
                 hideLog();
-            } else {
-                resetSearch();
-
+            } else
                 searchMovie(query);
-            }
 
         }else
             displayLog(getResources().getStringArray(R.array.warning)[0]);
     }
 
     private void resetSearch(){
-        totalPages = currentPage = 1;
+        totalPages = 1;
+        currentPage = 0;
         homeAdapter = null;
         movies = new ArrayList<>();
     }

@@ -47,10 +47,21 @@ public class DetailsActivity extends AppCompatActivity implements UILogHandler{
         tvGenre.setText(movie.genres);
         tvOverview.setText(movie.overview);
 
-        if (movie.favorite)
-            ivFavorite.setVisibility(View.VISIBLE);
-        else
-            ivFavorite.setVisibility(View.GONE);
+        ivFavorite.setActivated(movie.favorite);
+
+        ivFavorite.setOnClickListener(view -> {
+            if (movie.favorite) {
+                Controller.getInstance().movieDao.deleteRegister(movie.id);
+                movie.favorite = false;
+            } else {
+                movie.favorite = true;
+                Controller.getInstance().movieDao.insertRegister(movie);
+            }
+
+            ivFavorite.setActivated(movie.favorite);
+
+        });
+
 
         String backdropPath = movie.backdropPath;
         if (!TextUtils.isEmpty(backdropPath)) {
