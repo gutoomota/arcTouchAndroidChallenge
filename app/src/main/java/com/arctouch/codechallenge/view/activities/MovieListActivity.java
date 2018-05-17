@@ -1,5 +1,6 @@
 package com.arctouch.codechallenge.view.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -7,6 +8,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.OnScrollListener;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -22,11 +25,12 @@ import com.arctouch.codechallenge.view.adapters.HomeAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeActivity extends AppCompatActivity implements MovieListReceiver {
+public class MovieListActivity extends AppCompatActivity implements MovieListReceiver {
 
     private Controller controller;
     private final RequestKeyBuilder requestKeyBuilder = new RequestKeyBuilder();
 
+    private EditText etSearch;
     private TextView tvLog;
     private RecyclerView recyclerView;
     private ProgressBar progressBar;
@@ -47,11 +51,9 @@ public class HomeActivity extends AppCompatActivity implements MovieListReceiver
         controller.setMovieListReceiver(this);
 
         tvLog = findViewById(R.id.tvLog);
-        EditText etSearch = findViewById(R.id.etSearch);
+        etSearch = findViewById(R.id.etSearch);
         recyclerView = findViewById(R.id.recyclerView);
         progressBar = findViewById(R.id.progressBar);
-
-        movies = new ArrayList<>();
 
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override
@@ -62,19 +64,7 @@ public class HomeActivity extends AppCompatActivity implements MovieListReceiver
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 String query = String.valueOf(charSequence);
-                requestKey = requestKeyBuilder.generateRandomKey(keyLength);
-
-                totalPages = currentPage = 1;
-                homeAdapter = null;
-                movies = new ArrayList<>();
-
-                if ((query == null) || (query.isEmpty()))
-                    requestMoviePage();
-                else {
-                    progressBar.setVisibility(View.VISIBLE);
-
-                    controller.getMovieByQuery(query, currentPage, requestKey);
-                }
+                searchMovie(query);
             }
 
             @Override
@@ -89,16 +79,47 @@ public class HomeActivity extends AppCompatActivity implements MovieListReceiver
                 super.onScrollStateChanged(recyclerView, newState);
                 requestKey = requestKeyBuilder.generateRandomKey(keyLength);
 
-                if (!recyclerView.canScrollVertically(1)) {
+                if (!recyclerView.canScrollVertically(1))  {
                     currentPage++;
                     requestMoviePage();
                 }
             }
         });
+    }
 
+    private void searchMovie(String query) {
         requestKey = requestKeyBuilder.generateRandomKey(keyLength);
-        controller.getInitialData(requestKey);
 
+        totalPages = currentPage = 1;
+        homeAdapter = null;
+        movies = new ArrayList<>();
+
+        if ((query == null) || (query.isEmpty()))
+            requestMoviePage();
+        else {
+            progressBar.setVisibility(View.VISIBLE);
+
+            controller.getMovieByQuery(query, currentPage, requestKey);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_favorites:
+                startActivity(new Intent(this, FavoriteListActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void requestMoviePage(){
@@ -145,10 +166,21 @@ public class HomeActivity extends AppCompatActivity implements MovieListReceiver
         super.onResume();
 
         if (controller.networkObserver.isNetworkAvailable(controller)) {
-            if (homeAdapter == null)
+            String query = etSearch.getText().toString();
+            if (query.isEmpty()) {
+                progressBar.setVisibility(View.VISIBLE);
+
+                totalPages = currentPage = 1;
+                movies = new ArrayList<>();
+                homeAdapter = null;
+
+                requestKey = requestKeyBuilder.generateRandomKey(keyLength);
                 controller.getInitialData(requestKey);
 
-            hideLog();
+                hideLog();
+            } else
+                searchMovie(query);
+
         }else
             displayLog(getResources().getStringArray(R.array.warning)[0]);
     }

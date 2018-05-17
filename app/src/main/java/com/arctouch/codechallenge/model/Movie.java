@@ -5,11 +5,20 @@ import com.squareup.moshi.Json;
 import java.io.Serializable;
 import java.util.List;
 
-public class Movie implements Serializable {
+import io.realm.RealmList;
+import io.realm.RealmObject;
+import io.realm.annotations.Ignore;
+import io.realm.annotations.PrimaryKey;
+
+public class Movie extends RealmObject implements Serializable {
+    @PrimaryKey
     public int id;
     public String title;
     public String overview;
-    public List<Genre> genres;
+    public boolean favorite = false;
+
+    public String genres;
+    @Ignore
     @Json(name = "genre_ids")
     public List<Integer> genreIds;
     @Json(name = "poster_path")
@@ -65,5 +74,24 @@ public class Movie implements Serializable {
                 ", backdropPath='" + backdropPath + '\'' +
                 ", releaseDate='" + releaseDate + '\'' +
                 '}';
+    }
+
+    public Movie() {}
+
+    public Movie (int id, String title, String overview, boolean favorite,
+                  String genres, String posterPath,
+                  String backdropPath, String releaseDate){
+        this.id = id;
+        this.title = title;
+        this.overview = overview;
+        this.favorite = favorite;
+        this.genres = genres;
+        this.posterPath = posterPath;
+        this.backdropPath = backdropPath;
+        this.releaseDate = releaseDate;
+    }
+
+    public Movie copy() {
+        return new Movie(id, title, overview, favorite, genres, posterPath, backdropPath, releaseDate);
     }
 }

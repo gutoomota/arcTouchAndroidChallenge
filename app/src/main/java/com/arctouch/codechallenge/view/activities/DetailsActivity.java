@@ -40,11 +40,17 @@ public class DetailsActivity extends AppCompatActivity implements UILogHandler{
         TextView tvGenre = findViewById(R.id.tvGenre);
         TextView tvOverview = findViewById(R.id.tvOverview);
         ImageView ivPosterImage = findViewById(R.id.ivPosterImage);
+        ImageView ivFavorite = findViewById(R.id.ivFavorite);
 
         tvTitle.setText(movie.title);
         tvRelease.setText(movie.releaseDate);
-        tvGenre.setText(TextUtils.join(", ", movie.genres));
+        tvGenre.setText(movie.genres);
         tvOverview.setText(movie.overview);
+
+        if (movie.favorite)
+            ivFavorite.setVisibility(View.VISIBLE);
+        else
+            ivFavorite.setVisibility(View.GONE);
 
         String backdropPath = movie.backdropPath;
         if (!TextUtils.isEmpty(backdropPath)) {

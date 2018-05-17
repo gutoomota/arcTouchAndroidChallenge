@@ -15,7 +15,7 @@ public interface TmdbApi {
     String DEFAULT_LANGUAGE = Controller.getInstance().getResources().getString(R.string.default_language);
     String DEFAULT_REGION = Controller.getInstance().getResources().getString(R.string.default_region);
 
-    //API_KEY is Distributed on string_array to make it harder to reassemble in case of a reverse engineering on the .ap;k file
+    //API_KEY is Distributed on string_array to make it harder to reassemble in case of a reverse engineering on the .apk file
     String API_KEY =
                     Controller.getInstance().getResources().getStringArray(R.array.api_key)[6] +
                     Controller.getInstance().getResources().getStringArray(R.array.api_key)[2] +

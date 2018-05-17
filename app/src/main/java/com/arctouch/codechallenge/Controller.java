@@ -2,11 +2,13 @@ package com.arctouch.codechallenge;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
+import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.arctouch.codechallenge.api.TmdbApi;
 import com.arctouch.codechallenge.base.MovieListReceiver;
 import com.arctouch.codechallenge.dao.GenreDao;
+import com.arctouch.codechallenge.dao.MovieDao;
 import com.arctouch.codechallenge.data.Cache;
 import com.arctouch.codechallenge.model.Genre;
 import com.arctouch.codechallenge.model.Movie;
@@ -14,9 +16,11 @@ import com.arctouch.codechallenge.model.UpcomingMoviesResponse;
 import com.arctouch.codechallenge.util.NetworkObserver;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import io.realm.RealmList;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
@@ -31,6 +35,7 @@ public class Controller extends Application{
     public TmdbApi api;
 
     public GenreDao genreDao;
+    public MovieDao movieDao;
 
     @Override
     public void onCreate() {
@@ -46,6 +51,7 @@ public class Controller extends Application{
                 .create(TmdbApi.class);
 
         genreDao = new GenreDao(this);
+        movieDao = new MovieDao(this);
     }
 
     public static synchronized Controller getInstance() {
@@ -104,11 +110,15 @@ public class Controller extends Application{
 
     private void returnDataToList(UpcomingMoviesResponse response, String requestKey){
         for (Movie movie : response.results) {
-            movie.genres = new ArrayList<>();
+            List<Genre> genreList = new ArrayList<>();
 
             for (Genre genre : Cache.getGenres())
                 if (movie.genreIds.contains(genre.id))
-                    movie.genres.add(genre);
+                    genreList.add(genre);
+            movie.genres = TextUtils.join(", ", genreList);
+
+            if (movieDao.getRegister(movie.id) != null)
+                movie.favorite = true;
         }
 
         movieListReceiver.updateList(response.results, response.totalPages, response.page, requestKey);
